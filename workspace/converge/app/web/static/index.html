@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多站点变更汇合控制台</title>
+<link rel="stylesheet" href="/ui/styles.css">
+</head>
+<body>
+<header>
+  <h1>多站点变更汇合服务</h1>
+  <div id="session">
+    <input id="user" placeholder="用户名" autocomplete="off">
+    <input id="pass" type="password" placeholder="密码" autocomplete="off">
+    <button id="loginBtn">登录</button>
+    <span id="who"></span>
+    <button id="logoutBtn" class="ghost" hidden>退出</button>
+  </div>
+</header>
+
+<main>
+  <nav id="tabs">
+    <button data-tab="report" class="tab">上报信封</button>
+    <button data-tab="objects" class="tab">对象与图谱</button>
+    <button data-tab="review" class="tab">冲突判定</button>
+    <button data-tab="receipts" class="tab">脱敏收据</button>
+  </nav>
+
+  <!-- Operator: report -->
+  <section id="tab-report" class="panel">
+    <h2>上报变更信封</h2>
+    <p class="hint">只接受键、哈希与整数区段；不接受、不存储任何原始身份或像素。</p>
+    <div class="grid">
+      <label>请求键（幂等）<input id="f_rk" placeholder="req-0001"></label>
+      <label>替代对象键<input id="f_obj" placeholder="study-A (伪名)"></label>
+      <label>站点标识<input id="f_site" placeholder="site-1"></label>
+      <label>站点单调序号<input id="f_seq" type="number" value="0" min="0"></label>
+      <label>前驱节点摘要<input id="f_prev" placeholder="64 hex，留空=根"></label>
+      <label>变更摘要<input id="f_change" placeholder="64 hex 摘要"></label>
+      <label class="wide">覆盖区段 <small>start,end（每行一对）</small>
+        <textarea id="f_regions" rows="3">0,100</textarea></label>
+    </div>
+    <button id="submitEnv">上报</button>
+    <pre id="reportOut" class="out"></pre>
+  </section>
+
+  <!-- shared: objects + graph -->
+  <section id="tab-objects" class="panel" hidden>
+    <h2>对象与版本图</h2>
+    <button id="refreshObjs" class="ghost">刷新</button>
+    <div class="cols">
+      <div>
+        <table id="objTable">
+          <thead><tr><th>对象键</th><th>当前版本</th><th>状态</th><th>挂起/待判</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="detail">
+        <div id="detailMeta" class="muted">选择左侧对象查看有向版本图</div>
+        <svg id="graph" width="640" height="360"></svg>
+        <div id="detailNodes"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reviewers -->
+  <section id="tab-review" class="panel" hidden>
+    <h2>冲突人工判定（两名不同复核员依次处理）</h2>
+    <button id="refreshCases" class="ghost">刷新待判</button>
+    <div id="cases"></div>
+  </section>
+
+  <!-- inspector read-only -->
+  <section id="tab-receipts" class="panel" hidden>
+    <h2>脱敏收据链（只读 / 下载）</h2>
+    <div class="grid">
+      <label>对象键<input id="rcpObj" placeholder="study-A"></label>
+      <span><button id="loadRcp">查询收据链</button>
+        <button id="dlRcp">下载脱敏收据</button>
+        <button id="verifyRcp" class="ghost">校验链</button></span>
+    </div>
+    <pre id="rcpOut" class="out"></pre>
+  </section>
+</main>
+
+<script src="/ui/app.js"></script>
+</body>
+</html>
